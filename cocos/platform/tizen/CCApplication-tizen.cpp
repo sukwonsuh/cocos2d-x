@@ -238,62 +238,58 @@ static void touch_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_inf
     cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesEnd(1, &id, &x, &y);
 }
 
-static void get_glview_mode(GLContextAttrs &attrs, char* gl_mode)
+static Elm_GLView_Mode get_glview_mode(const GLContextAttrs &attrs)
 {
-    strcat(gl_mode, "opengl");
+	/* for performance */
+	Elm_GLView_Mode mode = ELM_GLVIEW_DIRECT;
 
-    if (attrs.alphaBits > 0)
-    {
-    	strcat(gl_mode, ":alpha");
-    }
+	/* alpha */
+	if (attrs.alphaBits > 0)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_ALPHA);
+	}
 
-    if (attrs.depthBits > 0)
-    {
-    	strcat(gl_mode, ":depth");
-        if (attrs.depthBits <= 8)
-        {
-        	strcat(gl_mode, "8");
-        }
-        else if (attrs.depthBits <= 16)
-        {
-        	strcat(gl_mode, "16");
-        }
-        else if (attrs.depthBits <= 24)
-        {
-        	strcat(gl_mode, "24");
-        }
-        else
-        {
-        	strcat(gl_mode, "32");
-        }
-    }
+	/* depth */
+	if (attrs.depthBits > 24)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_DEPTH_32);
+	}
+	else if (attrs.depthBits > 16)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_DEPTH_24);
+	}
+	else if (attrs.depthBits > 8)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_DEPTH_16);
+	}
+	else if (attrs.depthBits > 0)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_DEPTH_8);
+	}
 
-    if (attrs.stencilBits > 0)
-    {
-    	strcat(gl_mode, ":stencil");
-        if (attrs.stencilBits == 1)
-        {
-        	strcat(gl_mode, "1");
-        }
-        else if (attrs.stencilBits == 2)
-        {
-        	strcat(gl_mode, "2");
-        }
-        else if (attrs.stencilBits <= 4)
-        {
-        	strcat(gl_mode, "4");
-        }
-        else if (attrs.stencilBits <= 8)
-        {
-        	strcat(gl_mode, "8");
-        }
-        else
-        {
-        	strcat(gl_mode, "16");
-        }
-    }
+	/* stencil */
+	if (attrs.stencilBits > 8)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_STENCIL_16);
+	}
+	else if (attrs.stencilBits > 4)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_STENCIL_8);
+	}
+	else if (attrs.stencilBits > 2)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_STENCIL_4);
+	}
+	else if (attrs.stencilBits > 1)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_STENCIL_2);
+	}
+	else if (attrs.stencilBits > 0)
+	{
+		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_STENCIL_1);
+	}
 
-    strcat(gl_mode, "\0");
+	return mode;
 }
 
 static bool app_create(void *data) {
@@ -310,11 +306,7 @@ static bool app_create(void *data) {
         return false;
 
     /* Create and initialize GLView */
-    ad->initGLContextAttrs();
-    GLContextAttrs attrs = GLView::getGLContextAttrs();
-    char gl_mode[100] = "";
-    get_glview_mode(attrs, gl_mode);
-    elm_config_accel_preference_set(gl_mode);
+    elm_config_accel_preference_set("opengl");
     /* Create the window */
     ad->_win = add_win("cocos2d-x");
 
@@ -340,8 +332,10 @@ static bool app_create(void *data) {
     evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-    /* Request a surface with alpha and a depth buffer */
-    Elm_GLView_Mode mode = (Elm_GLView_Mode)(ELM_GLVIEW_DIRECT | ELM_GLVIEW_DEPTH | ELM_GLVIEW_STENCIL);
+    /* Create and initialize GLView */
+    ad->initGLContextAttrs();
+    auto attrs = GLView::getGLContextAttrs();
+    auto mode = get_glview_mode(attrs);
     elm_glview_mode_set(gl, mode);
 
     /* The resize policy tells GLView what to do with the surface when it

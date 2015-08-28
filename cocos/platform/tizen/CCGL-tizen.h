@@ -28,6 +28,8 @@
 #include "platform/CCPlatformConfig.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_TIZEN
 
+#include <Elementary_GL_Helpers.h>
+
 //fixme
 #define glGenVertexArrays glGenVertexArraysOES
 #define glDeleteVertexArrays glDeleteVertexArraysOES
@@ -39,7 +41,6 @@
 #define glClearDepth glClearDepthf
 #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
 
-#include <Elementary_GL_Helpers.h>
 
 ELEMENTARY_GLVIEW_GLOBAL_DECLARE();
 

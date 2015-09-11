@@ -15,5 +15,5 @@ int main(int argc, char **argv)
 	AppDelegate app;
 
 	Application::getInstance()->setDeviceOrientation(APP_DEVICE_ORIENTATION_90);
-    return Application::getInstance()->run();
+    return Application::getInstance()->run(argc, argv);
 }

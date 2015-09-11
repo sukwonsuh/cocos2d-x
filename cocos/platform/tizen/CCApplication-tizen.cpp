@@ -443,7 +443,7 @@ static void app_control(app_control_h app_control, void *data)
     /* Handle the launch request. */
 }
 
-int Application::run()
+int Application::run(int argc, char *argv[])
 {
     app_event_callback_s event_callback = { nullptr, };
 

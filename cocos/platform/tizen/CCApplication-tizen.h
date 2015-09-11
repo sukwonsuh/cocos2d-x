@@ -32,10 +32,7 @@
 #include "platform/CCApplicationProtocol.h"
 #include <string>
 
-struct _Evas_Object;
-struct _Evas_GL;
-struct _Evas_GL_Context;
-struct _Evas_GL_Surface;
+#include <Elementary.h>
 
 NS_CC_BEGIN
 class Rect;
@@ -62,7 +59,7 @@ public:
     /**
      @brief Run the message loop.
      */
-    int run();
+    int run(int argc, char *argv[]);
 
     /**
      @brief Get current applicaiton instance.
@@ -109,12 +106,12 @@ public:
   void setDeviceOrientation(int orientation);
 
 public:
-    _Evas_Object * _win;
-    _Evas_Object * _conform;
+    Evas_Object * _win;
+    Evas_Object * _conform;
 
-    _Evas_GL * _evasGL;
-    _Evas_GL_Context * _ctx;
-    _Evas_GL_Surface * _sfc;
+    Evas_GL * _evasGL;
+    Evas_GL_Context * _ctx;
+    Evas_GL_Surface * _sfc;
 
     int _orientation;
 

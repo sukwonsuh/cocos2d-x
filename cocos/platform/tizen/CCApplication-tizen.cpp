@@ -148,7 +148,8 @@ static void init_gl(Evas_Object *obj) {
 static void create_indicator(Application *ad) {
     elm_win_conformant_set(ad->_win, EINA_TRUE);
 
-    elm_win_indicator_mode_set(ad->_win, ELM_WIN_INDICATOR_HIDE);
+    elm_win_indicator_mode_set(ad->_win, ELM_WIN_INDICATOR_SHOW);
+    elm_win_indicator_opacity_set(ad->_win, ELM_WIN_INDICATOR_TRANSPARENT);
 
     ad->_conform = elm_conformant_add(ad->_win);
     evas_object_size_hint_weight_set(ad->_conform, EVAS_HINT_EXPAND,
@@ -246,7 +247,8 @@ static Elm_GLView_Mode get_glview_mode(const GLContextAttrs &attrs)
 	/* alpha */
 	if (attrs.alphaBits > 0)
 	{
-		mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_ALPHA);
+		//fixme if enable this, cpp-test show white screen only.
+		//mode = (Elm_GLView_Mode)(mode | ELM_GLVIEW_ALPHA);
 	}
 
 	/* depth */
@@ -298,7 +300,7 @@ static bool app_create(void *data) {
      * If this function returns true, the main loop of application starts
      * If this function returns false, the application is terminated. */
 
-    Evas_Object *bx, *gl;
+    Evas_Object *gl;
     Ecore_Animator *ani;
     Application *ad = (Application *)data;
 
@@ -321,13 +323,8 @@ static bool app_create(void *data) {
     eext_object_event_callback_add(ad->_win, EEXT_CALLBACK_BACK, win_back_cb, ad);
     eext_object_event_callback_add(ad->_win, EEXT_CALLBACK_MORE, win_more_cb, ad);
 
-    /* Add a box to contain our GLView */
-    bx = elm_box_add(ad->_win);
-    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(ad->_win, bx);
-    evas_object_show(bx);
-
     gl = elm_glview_add(ad->_win);
+    elm_win_resize_object_add(ad->_win, gl);
     ELEMENTARY_GLVIEW_GLOBAL_USE(gl);
     evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -367,7 +364,6 @@ static bool app_create(void *data) {
     elm_glview_render_func_set(gl, draw_gl);
 
     /* Add the GLView to the box and show it */
-    elm_box_pack_end(bx, gl);
     evas_object_show(gl);
 
     elm_object_focus_set(gl, EINA_TRUE);
@@ -392,8 +388,6 @@ static bool app_create(void *data) {
     evas_object_event_callback_add(gl, EVAS_CALLBACK_MULTI_DOWN, touches_down_cb, ad);
     evas_object_event_callback_add(gl, EVAS_CALLBACK_MULTI_MOVE, touches_move_cb, ad);
     evas_object_event_callback_add(gl, EVAS_CALLBACK_MULTI_UP, touches_up_cb, ad);
-
-    evas_object_show(ad->_win);
 
     create_indicator(ad);
 

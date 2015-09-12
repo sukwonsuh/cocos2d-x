@@ -58,6 +58,14 @@
 #include <sys/ioctl.h>
 #endif
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_TIZEN
+#include <dlog.h>
+#ifdef  LOG_TAG
+#undef  LOG_TAG
+#endif
+#define LOG_TAG "cocos2d-x"
+#endif
+
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"
 #include "platform/CCPlatformConfig.h"
@@ -242,6 +250,9 @@ static void _log(const char *format, va_list args)
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     __android_log_print(ANDROID_LOG_DEBUG, "cocos2d-x debug info",  "%s", buf);
+
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_TIZEN
+    dlog_print(DLOG_DEBUG, LOG_TAG, "%s", buf);
 
 #elif CC_TARGET_PLATFORM ==  CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT || CC_TARGET_PLATFORM == CC_PLATFORM_WP8
     WCHAR wszBuf[MAX_LOG_LENGTH] = {0};

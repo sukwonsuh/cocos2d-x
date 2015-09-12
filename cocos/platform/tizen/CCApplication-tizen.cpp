@@ -31,7 +31,6 @@
 #include <string>
 
 #include <app.h>
-#include <dlog.h>
 #include <Elementary.h>
 #include <Elementary_GL_Helpers.h>
 #include <efl_extension.h>
@@ -42,11 +41,6 @@
 #include "base/CCEventKeyboard.h"
 #include "base/CCEventDispatcher.h"
 #include "platform/CCFileUtils.h"
-
-#ifdef  LOG_TAG
-#undef  LOG_TAG
-#endif
-#define LOG_TAG "cocos2d-x"
 
 ELEMENTARY_GLVIEW_GLOBAL_DEFINE();
 
@@ -447,11 +441,9 @@ int Application::run(int argc, char *argv[])
     event_callback.resume = app_resume;
     event_callback.app_control = app_control;
 
-    //setenv("EVAS_GL_WIN_PREROTATION", "1", 1); //fixme sukwon.suh
-
     int ret = app_main(0, nullptr, &event_callback, this);
     if (ret != APP_ERROR_NONE) {
-        dlog_print(DLOG_ERROR, LOG_TAG, "The application failed to start, and returned %d", ret);
+    	CCLOG("The application failed to start, and returned %d", ret);
     }
 
     return ret;
@@ -511,7 +503,7 @@ bool Application::openURL(const std::string &url)
 	}
 	else
 	{
-	    dlog_print(DLOG_ERROR, LOG_TAG, "open url failed, and returned %d", ctrlError);
+		CCLOG("open url failed, and returned %d", ctrlError);
 	}
 
 	app_control_destroy(app_control);

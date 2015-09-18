@@ -35,6 +35,7 @@
 #include <Elementary_GL_Helpers.h>
 #include <efl_extension.h>
 #include <Evas_GL.h>
+#include <Ecore.h>
 
 #include "CCGLViewImpl-tizen.h"
 #include "base/CCDirector.h"
@@ -50,17 +51,40 @@ void stopAccelerometerSensor();
 void pauseAccelerometerSensor();
 void resumeAccelerometerSensor();
 
-static void win_back_cb(void *data, Evas_Object *obj, void *event_info) {
-    //Application *ad = (Application *)data;
-    /* Let window go to hidden state. */
-    //elm_win_lower(ad->_win);
-    cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE, false);
-    cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+static Eina_Bool
+_key_down_cb(void *data, int type, void *ev)
+{
+   Ecore_Event_Key *event = (Ecore_Event_Key *)ev;
+   if (!strcmp("XF86Stop", event->key) || !strcmp("XF86Back", event->key))
+   {
+	    cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE, true);
+	    cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+   }
+   else if (!strcmp("XF86Menu", event->key))
+   {
+	    cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_MENU, true);
+	    cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+   }
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
-static void win_more_cb(void *data, Evas_Object *obj, void *event_info) {
-    cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_MENU, false);
-    cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+static Eina_Bool
+_key_up_cb(void *data, int type, void *ev)
+{
+   Ecore_Event_Key *event = (Ecore_Event_Key *)ev;
+   if (!strcmp("XF86Stop", event->key) || !strcmp("XF86Back", event->key))
+   {
+	    cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE, false);
+	    cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+   }
+   else if (!strcmp("XF86Menu", event->key))
+   {
+	    cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_MENU, false);
+	    cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+   }
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static void makeCurrent(void)
@@ -314,8 +338,8 @@ static bool app_create(void *data) {
     rots[1] = rots[0] + 180 % 360;
     elm_win_wm_rotation_available_rotations_set(ad->_win, rots, 2);
 
-    eext_object_event_callback_add(ad->_win, EEXT_CALLBACK_BACK, win_back_cb, ad);
-    eext_object_event_callback_add(ad->_win, EEXT_CALLBACK_MORE, win_more_cb, ad);
+    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _key_down_cb, ad);
+    ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, ad);
 
     gl = elm_glview_add(ad->_win);
     elm_win_resize_object_add(ad->_win, gl);

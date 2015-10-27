@@ -457,7 +457,7 @@ static void app_control(app_control_h app_control, void *data)
 
 int Application::run(int argc, char *argv[])
 {
-    app_event_callback_s event_callback = { nullptr, };
+	ui_app_lifecycle_callback_s event_callback = { nullptr, };
 
     event_callback.create = app_create;
     event_callback.terminate = app_terminate;
@@ -465,7 +465,7 @@ int Application::run(int argc, char *argv[])
     event_callback.resume = app_resume;
     event_callback.app_control = app_control;
 
-    int ret = app_main(0, nullptr, &event_callback, this);
+    int ret = ui_app_main(0, nullptr, &event_callback, this);
     if (ret != APP_ERROR_NONE) {
     	CCLOG("The application failed to start, and returned %d", ret);
     }

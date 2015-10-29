@@ -395,7 +395,6 @@ static bool app_create(void *data) {
     ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
     ani = ecore_animator_add(anim, gl);
     evas_object_data_set(gl, "ani", ani);
-    //evas_object_data_set(gl, "ad", ad);
     evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, del_anim, gl);
 
     /* Add Mouse Event Callbacks */
@@ -440,14 +439,7 @@ static void app_resume(void *data)
 
 static void app_terminate(void *data)
 {
-    /* Release all resources. */
-    if(!data)
-    {
-        return;
-    }
     stopAccelerometerSensor();
-    Application* app = ((Application *)data);
-    delete app;
 }
 
 static void app_control(app_control_h app_control, void *data)

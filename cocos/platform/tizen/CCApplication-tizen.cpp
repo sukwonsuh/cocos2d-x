@@ -465,7 +465,7 @@ int Application::run(int argc, char *argv[])
     event_callback.resume = app_resume;
     event_callback.app_control = app_control;
 
-    int ret = ui_app_main(0, nullptr, &event_callback, this);
+    int ret = ui_app_main(argc, argv, &event_callback, this);
     if (ret != APP_ERROR_NONE) {
     	CCLOG("The application failed to start, and returned %d", ret);
     }

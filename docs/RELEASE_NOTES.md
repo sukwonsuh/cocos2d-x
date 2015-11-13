@@ -21,13 +21,13 @@ If had the Samsung Z1 device, you can get more information from the following tw
 
 * Ubuntu 12.0.4+/Win7+/Mac OS X 10.10
 * [cocos2d-x-3.5-tizen.zip](http://cdn.cocos2d-x.org/cocos2d-x-3.5-tizen.zip)
-* [Tizen SDK 2.3](https://developer.tizen.org/downloads/tizen-sdk), `please select custom mode and select gcc4.8 package`
+* [Tizen SDK 2.3.1](https://developer.tizen.org/development/tools/download?langredirect=1#2.3.1), `please select custom mode and select gcc4.8 package`
 
 ![install-sdk](https://raw.githubusercontent.com/minggo/Pictures/master/tizen/tizen-install-sdk.png)
 
 # How to run cpp-tests on Tizen
 
-* download Install-manager and Tizen SDK image from [here](https://developer.tizen.org/downloads/tizen-sdk)
+* download Install-manager and Tizen SDK image from [here](https://developer.tizen.org/development/tools/download?langredirect=1#2.3.1)
 * install Tizen SDK and `select custom mode with GCC4.8`
 * open Tizen IDE
 
@@ -38,16 +38,14 @@ If had the Samsung Z1 device, you can get more information from the following tw
   ![set-workspace](https://raw.githubusercontent.com/minggo/Pictures/master/tizen/tizen-set-workspace.png)
   
 * right click `Project Explorer` and select `import`
-
-  ![import-project](https://raw.githubusercontent.com/minggo/Pictures/master/tizen/tizen-import-project.png)
-  
+* select 'General' and 'Existing Projects into Workspace'
 * select `cpp-tests` and `libcocos2dx` project
 
   ![select-project](https://raw.githubusercontent.com/minggo/Pictures/master/tizen/tizen-select-cpp-tests.png)
   
 ## Run on Tizen devices
 
-* change `ligcocos2dx` to debug mode and build it
+* change `lidcocos2dx` to debug mode and build it
   * right click `libcocos2dx` and select `Build Configurations->Set Active->Debug`
   * right click `libcocos2dx` and select `Build Project`
 * change `cpp-tests` to debug mode and build it
@@ -67,7 +65,7 @@ If you meet `security profile` issue, you can refer to [Security profiles](#secu
 
   ![power-on-emulator](https://raw.githubusercontent.com/minggo/Pictures/master/tizen/tizen-power-on-simulator.png)
 
-* change `ligcocos2dx` to emulator mode and build it
+* change `lidcocos2dx` to emulator mode and build it
   * right click `libcocos2dx` and select `Build Configurations->Set Active->Emulator`
   * right click `libcocos2dx` and select `Build Project`
 * change `cpp-tests` to emulator mode and run it(`make sure screen is unlocked`)

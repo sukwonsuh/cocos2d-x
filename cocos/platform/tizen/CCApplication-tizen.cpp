@@ -319,7 +319,6 @@ static bool app_create(void *data) {
      * If this function returns false, the application is terminated. */
 
     Evas_Object *gl;
-    Ecore_Animator *ani;
     Application *ad = (Application *)data;
 
     if (!data)
@@ -393,8 +392,8 @@ static bool app_create(void *data) {
      * GL so this animator needs to be deleted with ecore_animator_del().
      */
     ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
-    ani = ecore_animator_add(anim, gl);
-    evas_object_data_set(gl, "ani", ani);
+    ad->_ani = ecore_animator_add(anim, gl);
+    evas_object_data_set(gl, "ani", ad->_ani);
     evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, del_anim, gl);
 
     /* Add Mouse Event Callbacks */
@@ -422,6 +421,8 @@ static void app_pause(void *data)
 
     Application* app = ((Application *)data);
     app->applicationDidEnterBackground();
+
+    ecore_animator_freeze(app->_ani);
 }
 
 static void app_resume(void *data)
@@ -435,6 +436,8 @@ static void app_resume(void *data)
     Application* app = ((Application *)data);
     app->applicationWillEnterForeground();
     resumeAccelerometerSensor();
+
+    ecore_animator_thaw(app->_ani);
 }
 
 static void app_terminate(void *data)

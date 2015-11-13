@@ -112,6 +112,7 @@ public:
     Evas_GL * _evasGL;
     Evas_GL_Context * _ctx;
     Evas_GL_Surface * _sfc;
+    Ecore_Animator * _ani;
 
     int _orientation;
 

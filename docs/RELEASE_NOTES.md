@@ -45,7 +45,7 @@ If had the Samsung Z1 device, you can get more information from the following tw
   
 ## Run on Tizen devices
 
-* change `lidcocos2dx` to debug mode and build it
+* change `libcocos2dx` to debug mode and build it
   * right click `libcocos2dx` and select `Build Configurations->Set Active->Debug`
   * right click `libcocos2dx` and select `Build Project`
 * change `cpp-tests` to debug mode and build it
@@ -65,7 +65,7 @@ If you meet `security profile` issue, you can refer to [Security profiles](#secu
 
   ![power-on-emulator](https://raw.githubusercontent.com/minggo/Pictures/master/tizen/tizen-power-on-simulator.png)
 
-* change `lidcocos2dx` to emulator mode and build it
+* change `libcocos2dx` to emulator mode and build it
   * right click `libcocos2dx` and select `Build Configurations->Set Active->Emulator`
   * right click `libcocos2dx` and select `Build Project`
 * change `cpp-tests` to emulator mode and run it(`make sure screen is unlocked`)

@@ -81,7 +81,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setDisplayStats(true);
 
     // set FPS. the default value is 1.0/60 if you don't call this
-    director->setAnimationInterval(1.0 / 60);
+    director->setAnimationInterval(60 * 60 * 24);
 
     // create a scene. it's an autorelease object
     auto scene = HelloWorld::scene();
@@ -106,4 +106,59 @@ void AppDelegate::applicationWillEnterForeground() {
 
     // if you use SimpleAudioEngine, it must resume here
     // SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
+}
+
+void AppDelegate::applicationTimeTick(watch_time_h watch_time, void *data)
+{
+	const int TEXT_BUF_SIZE = 100;
+	char watch_text[TEXT_BUF_SIZE];
+	int hour24, minute, second;
+
+	if (watch_time == NULL)
+		return;
+
+	watch_time_get_hour24(watch_time, &hour24);
+	watch_time_get_minute(watch_time, &minute);
+	watch_time_get_second(watch_time, &second);
+	snprintf(watch_text, TEXT_BUF_SIZE, "%02d:%02d:%02d", hour24, minute, second);
+
+    auto scene = Director::getInstance()->getRunningScene();
+    HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
+	if (helloWorld)
+		helloWorld->setLabelString(watch_text);
+}
+
+void AppDelegate::applicationAmbientTick(watch_time_h watch_time, void *data)
+{
+	const int TEXT_BUF_SIZE = 100;
+	char watch_text[TEXT_BUF_SIZE];
+	int hour24, minute, second;
+
+	if (watch_time == NULL)
+		return;
+
+	watch_time_get_hour24(watch_time, &hour24);
+	watch_time_get_minute(watch_time, &minute);
+	snprintf(watch_text, TEXT_BUF_SIZE, "%02d:%02d", hour24, minute);
+
+    auto scene = Director::getInstance()->getRunningScene();
+    HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
+	if (helloWorld)
+		helloWorld->setLabelString(watch_text);
+}
+
+void AppDelegate::applicationAmbientChanged(bool ambient_mode, void *data)
+{
+    auto scene = Director::getInstance()->getRunningScene();
+    HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
+    Sprite* sprite = dynamic_cast<Sprite*> (helloWorld->getChildByName("bg"));
+
+    if(ambient_mode)
+    {
+    	sprite->setTexture("");
+    }
+    else
+    {
+    	sprite->setTexture("HelloWorld.png");
+    }
 }

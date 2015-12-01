@@ -61,7 +61,7 @@ namespace cocos2d {
             	char* mime_type = (char*)MIMEType.c_str();
             	char* encode = (char*)encoding.c_str();
             	char* base_uri = (char*)baseURL.c_str();
-            	ewk_view_contents_set(_ewkView, contents, contents_size, mime_type, encode, base_uri);
+            	//ewk_view_contents_set(_ewkView, contents, contents_size, mime_type, encode, base_uri);
             }
 
             void WebViewImpl::loadHTMLString(const std::string &string, const std::string &baseURL) {
@@ -71,7 +71,7 @@ namespace cocos2d {
             	char* mime_type = (char*)baseURL.c_str();
             	char* encoding = nullptr;
             	char* base_uri = nullptr;//(char*)baseURL.c_str();
-            	ewk_view_contents_set(_ewkView, contents, contents_size, mime_type, encoding, base_uri);
+            	//ewk_view_contents_set(_ewkView, contents, contents_size, mime_type, encoding, base_uri);
             }
 
             void WebViewImpl::loadURL(const std::string &url) {

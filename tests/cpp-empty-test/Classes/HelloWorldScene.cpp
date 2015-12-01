@@ -11,6 +11,7 @@ Scene* HelloWorld::scene()
     
     // 'layer' is an autorelease object
     HelloWorld *layer = HelloWorld::create();
+    layer->setName("HelloWorld");
 
     // add layer as a child to scene
     scene->addChild(layer);
@@ -57,6 +58,9 @@ bool HelloWorld::init()
     
     auto label = LabelTTF::create("Hello World", "Arial", TITLE_FONT_SIZE);
     
+    mLabel = label;
+    label->setFontSize(50.0);
+
     // position the label on the center of the screen
     label->setPosition(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height);
@@ -69,6 +73,8 @@ bool HelloWorld::init()
 
     // position the sprite on the center of the screen
     sprite->setPosition(Vec2(visibleSize / 2) + origin);
+
+    sprite->setName("bg");
 
     // add the sprite as a child to this layer
     this->addChild(sprite);
@@ -88,4 +94,9 @@ void HelloWorld::menuCloseCallback(Ref* sender)
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     exit(0);
 #endif
+}
+
+void HelloWorld::setLabelString(char *text)
+{
+	mLabel->setString(text);
 }

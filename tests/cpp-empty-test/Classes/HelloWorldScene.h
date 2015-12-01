@@ -17,6 +17,10 @@ public:
     
     // implement the "static node()" method manually
     CREATE_FUNC(HelloWorld);
+
+    void setLabelString(char *text);
+
+    cocos2d::LabelTTF * mLabel;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

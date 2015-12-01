@@ -3,6 +3,33 @@
 
 USING_NS_CC;
 
+void HelloWorld::onAcceleration(Acceleration* acc, Event* unused_event)
+{
+    mLabel_x -= acc->y;
+    mLabel_y -= acc->x;
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    auto offset = mLabel->getBoundingBox().size.width / 2;
+    if (mLabel_x > visibleSize.width + offset)
+    {
+    	mLabel_x = 0 + offset;
+    }
+    else if(mLabel_x < 0.0f + offset)
+    {
+    	mLabel_x = visibleSize.width + offset;
+    }
+
+    if (mLabel_y > visibleSize.height)
+    {
+    	mLabel_y = 0.0f;
+    }
+    else if(mLabel_y < 0.0f)
+    {
+    	mLabel_y = visibleSize.height;
+    }
+
+    mLabel->setPosition(mLabel_x, mLabel_y);
+}
 
 Scene* HelloWorld::scene()
 {
@@ -12,6 +39,11 @@ Scene* HelloWorld::scene()
     // 'layer' is an autorelease object
     HelloWorld *layer = HelloWorld::create();
     layer->setName("HelloWorld");
+
+    Device::setAccelerometerEnabled(true);
+
+    layer->_accelerationListener = EventListenerAcceleration::create(CC_CALLBACK_2(Layer::onAcceleration, layer));
+    layer->getEventDispatcher()->addEventListenerWithSceneGraphPriority(layer->_accelerationListener, layer);
 
     // add layer as a child to scene
     scene->addChild(layer);
@@ -36,20 +68,7 @@ bool HelloWorld::init()
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program
     //    you may modify it.
-
-    // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-                                        "CloseNormal.png",
-                                        "CloseSelected.png",
-                                        CC_CALLBACK_1(HelloWorld::menuCloseCallback,this));
-    
-    closeItem->setPosition(origin + Vec2(visibleSize) - Vec2(closeItem->getContentSize() / 2));
-
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, nullptr);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
-    
+   
     /////////////////////////////
     // 3. add your codes below...
 
@@ -62,8 +81,9 @@ bool HelloWorld::init()
     label->setFontSize(50.0);
 
     // position the label on the center of the screen
-    label->setPosition(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height - label->getContentSize().height);
+    mLabel_x = origin.x + visibleSize.width / 2;
+    mLabel_y = origin.y + visibleSize.height - label->getContentSize().height;
+    label->setPosition(mLabel_x, mLabel_y);
 
     // add the label as a child to this layer
     this->addChild(label, 1);

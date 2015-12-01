@@ -20,7 +20,14 @@ public:
 
     void setLabelString(char *text);
 
+    void onAcceleration(cocos2d::Acceleration* acc, cocos2d::Event* unused_event);
+
+    cocos2d::EventListenerAcceleration* _accelerationListener;
+
     cocos2d::LabelTTF * mLabel;
+
+    float mLabel_x;
+    float mLabel_y;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

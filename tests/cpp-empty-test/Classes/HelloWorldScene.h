@@ -18,13 +18,12 @@ public:
     // implement the "static node()" method manually
     CREATE_FUNC(HelloWorld);
 
-    void setLabelString(char *text);
-
     void onAcceleration(cocos2d::Acceleration* acc, cocos2d::Event* unused_event);
 
-    cocos2d::EventListenerAcceleration* _accelerationListener;
+    void Add3DObject();
+    void AddCamera();
 
-    cocos2d::LabelTTF * mLabel;
+    cocos2d::EventListenerAcceleration* _accelerationListener;
 
     float mLabel_x;
     float mLabel_y;

@@ -125,7 +125,46 @@ void AppDelegate::applicationTimeTick(watch_time_h watch_time, void *data)
     auto scene = Director::getInstance()->getRunningScene();
     HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
 	if (helloWorld)
-		helloWorld->setLabelString(watch_text);
+	{
+	    auto label = dynamic_cast<Label*> (helloWorld->getChildByName("label"));
+	    if (label)
+	    {
+	    	label->setString(watch_text);
+	    }
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_second"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 6.0f * second;
+				sprite3D->setRotation3D(rot);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_minute"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 6.0f * minute;
+				rot.z += 6.0f * (second / 60.0f);
+				sprite3D->setRotation3D(rot);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_hour"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 30.0f * (hour24 % 12);
+				rot.z += 30.0f * (minute / 60.0f);
+				rot.z += 0.5f * (second / 60.0f);
+				sprite3D->setRotation3D(rot);
+			}
+		}
+	}
 }
 
 void AppDelegate::applicationAmbientTick(watch_time_h watch_time, void *data)
@@ -139,26 +178,103 @@ void AppDelegate::applicationAmbientTick(watch_time_h watch_time, void *data)
 
 	watch_time_get_hour24(watch_time, &hour24);
 	watch_time_get_minute(watch_time, &minute);
+	watch_time_get_second(watch_time, &second);
 	snprintf(watch_text, TEXT_BUF_SIZE, "%02d:%02d", hour24, minute);
 
     auto scene = Director::getInstance()->getRunningScene();
+    if (!scene)
+    	return;
+
     HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
 	if (helloWorld)
-		helloWorld->setLabelString(watch_text);
+	{
+	    auto label = dynamic_cast<Label*> (helloWorld->getChildByName("label"));
+	    if (label)
+	    {
+	    	label->setString(watch_text);
+	    }
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_minute"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 6.0f * minute;
+				rot.z += 6.0f * (second / 60.0f);
+				sprite3D->setRotation3D(rot);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_hour"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 30.0f * (hour24 % 12);
+				rot.z += 30.0f * (minute / 60.0f);
+				rot.z += 0.5f * (second / 60.0f);
+				sprite3D->setRotation3D(rot);
+			}
+		}
+	}
 }
 
 void AppDelegate::applicationAmbientChanged(bool ambient_mode, void *data)
 {
     auto scene = Director::getInstance()->getRunningScene();
-    HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
-    Sprite* sprite = dynamic_cast<Sprite*> (helloWorld->getChildByName("bg"));
+    if (!scene)
+    	return;
 
-    if(ambient_mode)
-    {
-    	sprite->setTexture("");
-    }
-    else
-    {
-    	sprite->setTexture("HelloWorld.png");
-    }
+    HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
+    if (!helloWorld)
+    	return;
+
+	if(ambient_mode)
+	{
+	    auto label = dynamic_cast<Label*> (helloWorld->getChildByName("label"));
+	    if (label)
+	    {
+	    	label->disableEffect();
+	    }
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("body"));
+			if (sprite3D)
+			{
+				sprite3D->setVisible(false);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_second"));
+			if (sprite3D)
+			{
+				sprite3D->setVisible(false);
+			}
+		}
+	}
+	else
+	{
+	    auto label = dynamic_cast<Label*> (helloWorld->getChildByName("label"));
+	    if (label)
+	    {
+	    	label->enableShadow();
+	    }
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("body"));
+			if (sprite3D)
+			{
+				sprite3D->setVisible(true);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_second"));
+			if (sprite3D)
+			{
+				sprite3D->setVisible(true);
+			}
+		}
+	}
 }

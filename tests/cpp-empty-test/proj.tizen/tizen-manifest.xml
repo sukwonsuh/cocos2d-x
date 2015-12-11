@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <manifest xmlns="http://tizen.org/ns/packages" api-version="2.3.1" package="org.tizen.cpp-empty-test" version="1.0.0">
     <profile name="wearable"/>
-    <watch-application ambient-support="true" appid="org.tizen.cpp-empty-test" exec="cpp-empty-test">
+    <watch-application ambient-support="true" appid="org.tizen.cpp-empty-test" exec="cpp-empty-test" hw-acceleration="on">
         <label>cpp-empty-test</label>
         <icon>cpp-empty-test.png</icon>
     </watch-application>

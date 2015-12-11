@@ -442,12 +442,14 @@ static void
 app_ambient_changed(bool ambient_mode, void *data)
 {
 	Application* app = Application::getInstance();
-	app->applicationAmbientChanged(ambient_mode, data);
-	app_resume(app);
-
-	if (ambient_mode)
+	if (app)
 	{
-		ecore_animator_freeze(app->_ani);
+		app->applicationAmbientChanged(ambient_mode, data);
+
+		if (ambient_mode)
+		{
+		    app->applicationWillEnterForeground();
+		}
 	}
 }
 

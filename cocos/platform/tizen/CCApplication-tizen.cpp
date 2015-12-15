@@ -450,6 +450,7 @@ app_ambient_changed(bool ambient_mode, void *data)
 		{
 		    app->applicationWillEnterForeground();
 		}
+		elm_glview_changed_set((Evas_Object*)app->_gl);
 	}
 }
 

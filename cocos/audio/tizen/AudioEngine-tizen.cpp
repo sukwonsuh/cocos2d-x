@@ -94,6 +94,18 @@ static AudioEngineThreadPool* _threadPool = nullptr;
 using namespace cocos2d;
 using namespace cocos2d::experimental;
 
+static void sessionInterruptedCallback(sound_session_interrupted_code_e code, void *user_data)
+{
+	if(code == SOUND_SESSION_INTERRUPTED_COMPLETED)
+	{
+		AudioEngine::resumeAll();
+	}
+	else
+	{
+		AudioEngine::pauseAll();		
+	}
+}
+
 AudioPlayer::AudioPlayer()
     : _playerHandle(nullptr)
     , _finishCallback(nullptr)
@@ -231,6 +243,8 @@ bool AudioEngineImpl::init()
 	sound_manager_set_media_session_option(SOUND_SESSION_OPTION_MIX_WITH_OTHERS_WHEN_START,
 			SOUND_SESSION_OPTION_INTERRUPTIBLE_DURING_PLAY);
 	sound_manager_set_media_session_resumption_option(SOUND_SESSION_OPTION_RESUMPTION_BY_SYSTEM_OR_MEDIA_PAUSED);
+
+	sound_manager_set_session_interrupted_cb(sessionInterruptedCallback, this);
 
 	if (!_threadPool)
 	{

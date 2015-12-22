@@ -288,7 +288,7 @@ void VideoPlayer::play()
     {
     	_VideoPlayerTizen* impl = (_VideoPlayerTizen*)_videoView;
         player_set_sound_type(impl->_player, SOUND_TYPE_MEDIA);
-        player_set_display(impl->_player, PLAYER_DISPLAY_TYPE_NONE, GET_DISPLAY(impl->_image));
+        player_set_display(impl->_player, PLAYER_DISPLAY_TYPE_EVAS, GET_DISPLAY(impl->_image));
 
         if (_keepAspectRatioEnabled)
         {

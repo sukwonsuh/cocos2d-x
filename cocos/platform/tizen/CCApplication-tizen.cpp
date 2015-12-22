@@ -30,8 +30,7 @@
 #include <sys/time.h>
 #include <string>
 
-#include <watch_app_efl.h>
-
+#include <app.h>
 #include <Elementary.h>
 #include <Elementary_GL_Helpers.h>
 #include <efl_extension.h>
@@ -88,6 +87,12 @@ _key_up_cb(void *data, int type, void *ev)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void makeCurrent(void)
+{
+	Application* app = Application::getInstance();
+	evas_gl_make_current(app->_evasGL, app->_sfc, app->_ctx);
+}
+
 static void draw_gl(Evas_Object *obj)
 {
     auto director = Director::getInstance();
@@ -107,11 +112,9 @@ Application* Application::__instance = nullptr;
 Application::Application()
 : _win(nullptr)
 , _conform(nullptr)
-, _gl(nullptr)
-, _ani(nullptr)
-, _orientation(APP_DEVICE_ORIENTATION_0)
 , _animationInterval(1.0f/60.0f*1000.0f)
 {
+    _orientation = APP_DEVICE_ORIENTATION_0;
     CC_ASSERT(! __instance);
     __instance = this;
 }
@@ -135,6 +138,11 @@ static Eina_Bool anim(void *data) {
 
 static void init_gl(Evas_Object *obj) {
     Application *ad = Application::getInstance();
+
+    //save current ctx
+    ad->_evasGL = elm_glview_evas_gl_get(obj);
+    ad->_ctx = evas_gl_current_context_get(ad->_evasGL);
+    ad->_sfc = evas_gl_current_surface_get(ad->_evasGL);
 
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
@@ -168,6 +176,20 @@ static void create_indicator(Application *ad) {
     evas_object_show(ad->_conform);
 }
 
+static Evas_Object* add_win(const char *name) {
+    Evas_Object *win;
+
+    win = elm_win_util_standard_add(name, "tizen");
+
+    if (!win)
+        return nullptr;
+    //fix openURL tests not goes to another program issue
+   // elm_win_fullscreen_set(win, EINA_TRUE);
+    evas_object_show(win);
+
+    return win;
+}
+
 //touch call back
 static void touches_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info)
 {
@@ -176,6 +198,7 @@ static void touches_down_cb(void *data, Evas *e , Evas_Object *obj , void *event
     float x = ev->canvas.x;
     float y = ev->canvas.y;
 
+    makeCurrent();
     cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesBegin(1, &id, &x, &y);
 }
 
@@ -186,6 +209,7 @@ static void touches_move_cb(void *data, Evas *e , Evas_Object *obj , void *event
     float x = ev->cur.canvas.x;
     float y = ev->cur.canvas.y;
 
+    makeCurrent();
     cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesMove(1, &id, &x, &y);
 }
 
@@ -196,6 +220,7 @@ static void touches_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_i
     float x = ev->canvas.x;
     float y = ev->canvas.y;
 
+    makeCurrent();
     cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesEnd(1, &id, &x, &y);
 }
 
@@ -206,6 +231,7 @@ static void touch_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_i
     float x = ev->canvas.x;
     float y = ev->canvas.y;
 
+    makeCurrent();
     cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesBegin(1, &id, &x, &y);
 }
 
@@ -216,6 +242,7 @@ static void touch_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_i
     float x = ev->cur.canvas.x;
     float y = ev->cur.canvas.y;
 
+    makeCurrent();
     cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesMove(1, &id, &x, &y);
 }
 
@@ -226,6 +253,7 @@ static void touch_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_inf
     float x = ev->canvas.x;
     float y = ev->canvas.y;
 
+    makeCurrent();
     cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesEnd(1, &id, &x, &y);
 }
 
@@ -284,7 +312,7 @@ static Elm_GLView_Mode get_glview_mode(const GLContextAttrs &attrs)
 	return mode;
 }
 
-static bool app_create(int width, int height, void *data) {
+static bool app_create(void *data) {
     /* Hook to take necessary actions before main event loop starts
      * Initialize UI resources and application's data
      * If this function returns true, the main loop of application starts
@@ -299,20 +327,21 @@ static bool app_create(int width, int height, void *data) {
     /* Create and initialize GLView */
     elm_config_accel_preference_set("opengl");
     /* Create the window */
-
-    watch_app_get_elm_win(&ad->_win);
+    ad->_win = add_win("cocos2d-x");
 
     if (!ad->_win)
         return false;
 
-    evas_object_show(ad->_win);
+    int rots[2];
+    rots[0] = ad->_orientation;
+    rots[1] = rots[0] + 180 % 360;
+    elm_win_wm_rotation_available_rotations_set(ad->_win, rots, 2);
 
-    evas_object_resize(ad->_win, width, height);
+    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _key_down_cb, ad);
+    ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, ad);
 
-    create_indicator(ad);
-
-    gl = elm_glview_add(ad->_conform);
-    ad->_gl = gl;
+    gl = elm_glview_add(ad->_win);
+    elm_win_resize_object_add(ad->_win, gl);
     ELEMENTARY_GLVIEW_GLOBAL_USE(gl);
     evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -351,8 +380,6 @@ static bool app_create(int width, int height, void *data) {
     /* The render callback function gets registered here */
     elm_glview_render_func_set(gl, draw_gl);
 
-    elm_object_content_set(ad->_conform, gl);
-
     /* Add the GLView to the box and show it */
     evas_object_show(gl);
 
@@ -378,6 +405,7 @@ static bool app_create(int width, int height, void *data) {
     evas_object_event_callback_add(gl, EVAS_CALLBACK_MULTI_MOVE, touches_move_cb, ad);
     evas_object_event_callback_add(gl, EVAS_CALLBACK_MULTI_UP, touches_up_cb, ad);
 
+    create_indicator(ad);
 
     return true;
 }
@@ -422,41 +450,9 @@ static void app_control(app_control_h app_control, void *data)
     /* Handle the launch request. */
 }
 
-static void
-app_time_tick(watch_time_h watch_time, void *data)
-{
-	Application* app = Application::getInstance();
-	app->applicationTimeTick(watch_time, data);
-	elm_glview_changed_set((Evas_Object*)app->_gl);
-}
-
-static void
-app_ambient_tick(watch_time_h watch_time, void *data)
-{
-	Application* app = Application::getInstance();
-	app->applicationAmbientTick(watch_time, data);
-    elm_glview_changed_set((Evas_Object*)app->_gl);
-}
-
-static void
-app_ambient_changed(bool ambient_mode, void *data)
-{
-	Application* app = Application::getInstance();
-	if (app)
-	{
-		app->applicationAmbientChanged(ambient_mode, data);
-
-		if (ambient_mode)
-		{
-		    app->applicationWillEnterForeground();
-		}
-		elm_glview_changed_set((Evas_Object*)app->_gl);
-	}
-}
-
 int Application::run(int argc, char *argv[])
 {
-	watch_app_lifecycle_callback_s event_callback = { nullptr, };
+	ui_app_lifecycle_callback_s event_callback = { nullptr, };
 
     event_callback.create = app_create;
     event_callback.terminate = app_terminate;
@@ -464,12 +460,7 @@ int Application::run(int argc, char *argv[])
     event_callback.resume = app_resume;
     event_callback.app_control = app_control;
 
-    //special callback funtions for tizen watch app
-    event_callback.time_tick = app_time_tick;
-	event_callback.ambient_tick = app_ambient_tick;
-	event_callback.ambient_changed = app_ambient_changed;
-
-    int ret = watch_app_main(argc, argv, &event_callback, this);
+    int ret = ui_app_main(argc, argv, &event_callback, this);
     if (ret != APP_ERROR_NONE) {
     	CCLOG("The application failed to start, and returned %d", ret);
     }

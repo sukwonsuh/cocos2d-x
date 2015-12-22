@@ -129,8 +129,7 @@ void startAccelerometerSensor()
 {
     if (!s_sensorListener)
     {
-        //sensor_get_default_sensor(SENSOR_ACCELEROMETER, &s_sensorHandle);
-        sensor_get_default_sensor(SENSOR_GYROSCOPE, &s_sensorHandle);
+        sensor_get_default_sensor(SENSOR_ACCELEROMETER, &s_sensorHandle);
         auto err = sensor_create_listener(s_sensorHandle, &s_sensorListener);
         if(SENSOR_ERROR_NONE != err)
         {

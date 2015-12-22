@@ -17,16 +17,6 @@ public:
     
     // implement the "static node()" method manually
     CREATE_FUNC(HelloWorld);
-
-    void onAcceleration(cocos2d::Acceleration* acc, cocos2d::Event* unused_event);
-
-    void Add3DObject();
-    void AddCamera();
-
-    cocos2d::EventListenerAcceleration* _accelerationListener;
-
-    float mLabel_x;
-    float mLabel_y;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

@@ -51,9 +51,16 @@ void stopAccelerometerSensor();
 void pauseAccelerometerSensor();
 void resumeAccelerometerSensor();
 
+static void makeCurrent(void)
+{
+	Application* app = Application::getInstance();
+	evas_gl_make_current(app->_evasGL, app->_sfc, app->_ctx);
+}
+
 static Eina_Bool
 _key_down_cb(void *data, int type, void *ev)
 {
+   makeCurrent();
    Ecore_Event_Key *event = (Ecore_Event_Key *)ev;
    if (!strcmp("XF86Stop", event->key) || !strcmp("XF86Back", event->key))
    {
@@ -72,6 +79,7 @@ _key_down_cb(void *data, int type, void *ev)
 static Eina_Bool
 _key_up_cb(void *data, int type, void *ev)
 {
+   makeCurrent();
    Ecore_Event_Key *event = (Ecore_Event_Key *)ev;
    if (!strcmp("XF86Stop", event->key) || !strcmp("XF86Back", event->key))
    {
@@ -85,12 +93,6 @@ _key_up_cb(void *data, int type, void *ev)
    }
 
    return ECORE_CALLBACK_PASS_ON;
-}
-
-static void makeCurrent(void)
-{
-	Application* app = Application::getInstance();
-	evas_gl_make_current(app->_evasGL, app->_sfc, app->_ctx);
 }
 
 static void draw_gl(Evas_Object *obj)

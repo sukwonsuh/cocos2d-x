@@ -57,6 +57,30 @@ static void makeCurrent(void)
 	evas_gl_make_current(app->_evasGL, app->_sfc, app->_ctx);
 }
 
+#if defined (TIZEN_WEARABLE)
+#include <circle/efl_extension_rotary.h>
+static Eina_Bool
+_Rotary_Event_Cb(void *data, Evas_Object *obj, Eext_Rotary_Event_Info *info)
+{
+	if (info)
+	{
+		makeCurrent();
+		Eext_Rotary_Event_Direction direction = info->direction;
+		if (direction == EEXT_ROTARY_DIRECTION_CLOCKWISE)
+		{
+			cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW, true);
+			cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+		}
+		else
+		{
+			cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW, true);
+			cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+		}
+	}
+}
+
+#endif
+
 static Eina_Bool
 _key_down_cb(void *data, int type, void *ev)
 {
@@ -406,6 +430,11 @@ static bool app_create(void *data) {
     evas_object_event_callback_add(gl, EVAS_CALLBACK_MULTI_DOWN, touches_down_cb, ad);
     evas_object_event_callback_add(gl, EVAS_CALLBACK_MULTI_MOVE, touches_move_cb, ad);
     evas_object_event_callback_add(gl, EVAS_CALLBACK_MULTI_UP, touches_up_cb, ad);
+
+#if defined (TIZEN_WEARABLE)
+    eext_rotary_object_event_callback_add(gl, _Rotary_Event_Cb, ad);
+    eext_rotary_object_event_activated_set(gl, EINA_TRUE);
+#endif
 
     create_indicator(ad);
 

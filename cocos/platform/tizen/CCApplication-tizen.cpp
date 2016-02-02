@@ -79,7 +79,21 @@ _Rotary_Event_Cb(void *data, Evas_Object *obj, Eext_Rotary_Event_Info *info)
 	}
 }
 
-#endif
+static void
+_Back_Cb (void *data, Evas_Object *obj, void *event_info)
+{
+	makeCurrent();
+	{
+		cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE, true);
+		cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+	}
+
+	{
+		cocos2d::EventKeyboard event(cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE, false);
+		cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+	}
+}
+#endif //#if defined (TIZEN_WEARABLE)
 
 static Eina_Bool
 _key_down_cb(void *data, int type, void *ev)
@@ -434,6 +448,7 @@ static bool app_create(void *data) {
 #if defined (TIZEN_WEARABLE)
     eext_rotary_object_event_callback_add(gl, _Rotary_Event_Cb, ad);
     eext_rotary_object_event_activated_set(gl, EINA_TRUE);
+    eext_object_event_callback_add(gl, EEXT_CALLBACK_BACK, _Back_Cb, ad);
 #endif
 
     create_indicator(ad);

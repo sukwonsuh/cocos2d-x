@@ -102,7 +102,11 @@ static void sessionInterruptedCallback(sound_session_interrupted_code_e code, vo
 	}
 	else
 	{
-		AudioEngine::pauseAll();		
+		AudioEngine::pauseAll();
+		if (code == SOUND_SESSION_INTERRUPTED_BY_EARJACK_UNPLUG)
+		{
+			AudioEngine::resumeAll();
+		}
 	}
 }
 

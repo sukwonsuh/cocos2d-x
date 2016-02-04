@@ -55,3 +55,19 @@ void AppDelegate::applicationWillEnterForeground()
     Director::getInstance()->startAnimation();
     SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
+
+
+void AppDelegate::applicationTimeTick(watch_time_h watch_time, void *data)
+{
+
+}
+
+void AppDelegate::applicationAmbientTick(watch_time_h watch_time, void *data)
+{
+
+}
+
+void AppDelegate::applicationAmbientChanged(bool ambient_mode, void *data)
+{
+
+}

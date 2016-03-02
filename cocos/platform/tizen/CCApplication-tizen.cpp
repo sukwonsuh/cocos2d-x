@@ -30,6 +30,7 @@
 #include <sys/time.h>
 #include <string>
 
+#include <watch_app.h>
 #include <watch_app_efl.h>
 
 #include <Elementary.h>
@@ -40,6 +41,7 @@
 
 #include "CCGLViewImpl-tizen.h"
 #include "base/CCDirector.h"
+#include "base/CCEventCustom.h"
 #include "base/CCEventKeyboard.h"
 #include "base/CCEventDispatcher.h"
 #include "platform/CCFileUtils.h"
@@ -425,27 +427,59 @@ static void app_control(app_control_h app_control, void *data)
 static void
 app_time_tick(watch_time_h watch_time, void *data)
 {
+	auto director = cocos2d::Director::getInstance();
+	if (director)
+	{
+		auto dispatcher = director->getEventDispatcher();
+		if (dispatcher)
+		{
+			dispatcher->dispatchCustomEvent("time_tick", (void*)watch_time);
+		}
+	}
+
 	Application* app = Application::getInstance();
-	app->applicationTimeTick(watch_time, data);
-	elm_glview_changed_set((Evas_Object*)app->_gl);
+	if (app)
+	{
+		elm_glview_changed_set((Evas_Object*)app->_gl);
+	}
 }
 
 static void
 app_ambient_tick(watch_time_h watch_time, void *data)
 {
+	auto director = cocos2d::Director::getInstance();
+	if (director)
+	{
+		auto dispatcher = director->getEventDispatcher();
+		if (dispatcher)
+		{
+			dispatcher->dispatchCustomEvent("ambient_tick", (void*)watch_time);
+		}
+	}
+
 	Application* app = Application::getInstance();
-	app->applicationAmbientTick(watch_time, data);
-    elm_glview_changed_set((Evas_Object*)app->_gl);
+	if (app)
+	{
+		elm_glview_changed_set((Evas_Object*)app->_gl);
+	}
 }
 
 static void
 app_ambient_changed(bool ambient_mode, void *data)
 {
+	auto director = cocos2d::Director::getInstance();
+	if (director)
+	{
+		auto dispatcher = director->getEventDispatcher();
+		if (dispatcher)
+		{
+			dispatcher->dispatchCustomEvent("ambient_changed", (void*)ambient_mode);
+		}
+	}
+
 	Application* app = Application::getInstance();
 	if (app)
 	{
-		app->applicationAmbientChanged(ambient_mode, data);
-
 		if (ambient_mode)
 		{
 		    app->applicationWillEnterForeground();

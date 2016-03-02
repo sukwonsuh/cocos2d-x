@@ -32,7 +32,6 @@
 #include "platform/CCApplicationProtocol.h"
 #include <string>
 
-#include <watch_app.h>
 #include <Elementary.h>
 
 NS_CC_BEGIN
@@ -105,12 +104,6 @@ public:
   virtual Platform getTargetPlatform();
   
   void setDeviceOrientation(int orientation);
-
-  virtual void applicationTimeTick(watch_time_h watch_time, void *data) = 0;
-
-  virtual void applicationAmbientTick(watch_time_h watch_time, void *data) = 0;
-
-  virtual void applicationAmbientChanged(bool ambient_mode, void *data) = 0;
 
 public:
     Evas_Object * _win;

@@ -1,6 +1,8 @@
 #include "HelloWorldScene.h"
 #include "AppMacros.h"
 
+#include <watch_app.h>
+
 USING_NS_CC;
 
 void HelloWorld::onAcceleration(Acceleration* acc, Event* unused_event)
@@ -76,6 +78,181 @@ void HelloWorld::onAcceleration(Acceleration* acc, Event* unused_event)
 	}
 }
 
+static void _app_time_tick(EventCustom* event)
+{
+	const int TEXT_BUF_SIZE = 100;
+	char watch_text[TEXT_BUF_SIZE];
+	int hour24, minute, second;
+
+	watch_time_h watch_time = (watch_time_h)event->getUserData();
+	if (watch_time == NULL)
+		return;
+
+	watch_time_get_hour24(watch_time, &hour24);
+	watch_time_get_minute(watch_time, &minute);
+	watch_time_get_second(watch_time, &second);
+	snprintf(watch_text, TEXT_BUF_SIZE, "%02d:%02d:%02d", hour24, minute, second);
+
+	auto scene = Director::getInstance()->getRunningScene();
+	HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
+	if (helloWorld)
+	{
+		auto label = dynamic_cast<Label*> (helloWorld->getChildByName("label"));
+		if (label)
+		{
+			label->setString(watch_text);
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_second"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 6.0f * second;
+				sprite3D->setRotation3D(rot);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_minute"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 6.0f * minute;
+				rot.z += 6.0f * (second / 60.0f);
+				sprite3D->setRotation3D(rot);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_hour"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 30.0f * (hour24 % 12);
+				rot.z += 30.0f * (minute / 60.0f);
+				rot.z += 0.5f * (second / 60.0f);
+				sprite3D->setRotation3D(rot);
+			}
+		}
+	}
+}
+
+static void _app_ambient_tick(EventCustom* event)
+{
+	const int TEXT_BUF_SIZE = 100;
+	char watch_text[TEXT_BUF_SIZE];
+	int hour24, minute, second;
+
+	watch_time_h watch_time = (watch_time_h)event->getUserData();
+	if (watch_time == NULL)
+		return;
+
+	watch_time_get_hour24(watch_time, &hour24);
+	watch_time_get_minute(watch_time, &minute);
+	watch_time_get_second(watch_time, &second);
+	snprintf(watch_text, TEXT_BUF_SIZE, "%02d:%02d", hour24, minute);
+
+    auto scene = Director::getInstance()->getRunningScene();
+    if (!scene)
+    	return;
+
+    HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
+	if (helloWorld)
+	{
+	    auto label = dynamic_cast<Label*> (helloWorld->getChildByName("label"));
+	    if (label)
+	    {
+	    	label->setString(watch_text);
+	    }
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_minute"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 6.0f * minute;
+				rot.z += 6.0f * (second / 60.0f);
+				sprite3D->setRotation3D(rot);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_hour"));
+			if (sprite3D)
+			{
+				auto rot = sprite3D->getRotation3D();
+				rot.z = 30.0f * (hour24 % 12);
+				rot.z += 30.0f * (minute / 60.0f);
+				rot.z += 0.5f * (second / 60.0f);
+				sprite3D->setRotation3D(rot);
+			}
+		}
+	}
+}
+
+static void _app_ambient_changed(EventCustom* event)
+{
+    auto scene = Director::getInstance()->getRunningScene();
+    if (!scene)
+    	return;
+
+    HelloWorld* helloWorld = dynamic_cast<HelloWorld*> (scene->getChildByName("HelloWorld"));
+    if (!helloWorld)
+    	return;
+
+	bool ambient_mode = (bool)event->getUserData();
+	if(ambient_mode)
+	{
+	    auto label = dynamic_cast<Label*> (helloWorld->getChildByName("label"));
+	    if (label)
+	    {
+	    	label->disableEffect();
+	    }
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("body"));
+			if (sprite3D)
+			{
+				sprite3D->setVisible(false);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_second"));
+			if (sprite3D)
+			{
+				sprite3D->setVisible(false);
+			}
+		}
+	}
+	else
+	{
+	    auto label = dynamic_cast<Label*> (helloWorld->getChildByName("label"));
+	    if (label)
+	    {
+	    	label->enableShadow();
+	    }
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("body"));
+			if (sprite3D)
+			{
+				sprite3D->setVisible(true);
+			}
+		}
+
+		{
+			Sprite3D* sprite3D = dynamic_cast<Sprite3D*> (helloWorld->getChildByName("niddle_second"));
+			if (sprite3D)
+			{
+				sprite3D->setVisible(true);
+			}
+		}
+	}
+
+}
+
 Scene* HelloWorld::scene()
 {
     // 'scene' is an autorelease object
@@ -92,6 +269,21 @@ Scene* HelloWorld::scene()
 
     // add layer as a child to scene
     scene->addChild(layer);
+
+    {
+        auto listener = EventListenerCustom::create("time_tick", _app_time_tick);
+        layer->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, layer);
+    }
+
+    {
+        auto listener = EventListenerCustom::create("ambient_tick", _app_ambient_tick);
+        layer->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, layer);
+    }
+
+    {
+        auto listener = EventListenerCustom::create("ambient_changed", _app_ambient_changed);
+        layer->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, layer);
+    }
 
     // return the scene
     return scene;
@@ -182,7 +374,7 @@ bool HelloWorld::init()
     mLabel_x = 0;
     mLabel_y = 0;
 
-    auto label = Label::createWithSystemFont("HelloWorld", "BreezeSans", 24);
+    auto label = Label::createWithSystemFont("HelloWorld", "Tizen", 24);
     if (label)
     {
     	label->setName("label");

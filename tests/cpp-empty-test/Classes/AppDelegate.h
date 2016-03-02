@@ -36,12 +36,6 @@ public:
     @param  the pointer of the application
     */
     virtual void applicationWillEnterForeground();
-
-    virtual void applicationTimeTick(watch_time_h watch_time, void *data);
-
-    virtual void applicationAmbientTick(watch_time_h watch_time, void *data);
-
-    virtual void applicationAmbientChanged(bool ambient_mode, void *data);
 };
 
 #endif // _APP_DELEGATE_H_

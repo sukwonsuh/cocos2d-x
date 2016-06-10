@@ -55,7 +55,8 @@ FileUtilsTizen::FileUtilsTizen()
 
 bool FileUtilsTizen::init()
 {
-	_defaultResRootPath = app_get_resource_path();
+	//_defaultResRootPath = app_get_resource_path();
+	_defaultResRootPath = "/opt/usr/media/cocos/";
 	_writablePath = app_get_data_path();
 
     return FileUtils::init();
